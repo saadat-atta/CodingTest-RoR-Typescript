@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { Container, ListGroup, Form } from "react-bootstrap";
 import { ResetButton } from "./uiComponent";
 import axios from "axios";
@@ -21,6 +21,8 @@ const TodoList: React.FC<Props> = ({ todoItems }) => {
     axios.defaults.headers.common["X-CSRF-TOKEN"] = token.content;
   }, []);
 
+  const [selectedCheckboxes,setSelectedCheckboxes] = useState(todoItems.filter(todo=> todo.checked).map(todo=>todo.id))
+  console.log(selectedCheckboxes)
   const checkBoxOnCheck = (
     e: React.ChangeEvent<HTMLInputElement>,
     todoItemId: number
@@ -29,6 +31,13 @@ const TodoList: React.FC<Props> = ({ todoItems }) => {
       id: todoItemId,
       checked: e.target.checked,
     });
+    const isFound = selectedCheckboxes.includes(todoItemId);
+    
+    if(isFound) {
+      setSelectedCheckboxes(selectedCheckboxes.filter(c=> c != todoItemId))
+    } else {
+      setSelectedCheckboxes([...selectedCheckboxes,todoItemId])
+    }
   };
 
   const resetButtonOnClick = (): void => {
@@ -44,7 +53,7 @@ const TodoList: React.FC<Props> = ({ todoItems }) => {
             <Form.Check
               type="checkbox"
               label={todo.title}
-              checked={todo.checked}
+              checked={selectedCheckboxes.includes(todo.id)}
               onChange={(e) => checkBoxOnCheck(e, todo.id)}
             />
           </ListGroup.Item>

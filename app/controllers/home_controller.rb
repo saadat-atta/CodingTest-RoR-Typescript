@@ -18,7 +18,7 @@ class HomeController < ApplicationController
   private
 
   def todo_item_params
-    params.permit(:id, :title, :checked)
+    params.require(:home).permit(:id, :title, :checked)
   end
 
   def set_todo_item
